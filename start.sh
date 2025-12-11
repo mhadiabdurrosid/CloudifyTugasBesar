@@ -26,4 +26,4 @@ echo "📊 Skipping schema initialization"
 echo "👥 Skipping user auto-setup"
 
 echo "🌐 Starting FrankenPHP..."
-exec frankenphp run --config /app/Caddyfile
+exec frankenphp run --config /Caddyfile
