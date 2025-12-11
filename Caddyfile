@@ -1,19 +1,20 @@
-# Basic FrankenPHP configuration for Railway
-# Railway handles TLS at the edge, so we serve plain HTTP
 :{$PORT:80} {
+
     # Enable FrankenPHP
     php_server
 
-    # Root directory
-    root * /app/public
+    # Root folder aplikasi (FIX: gunakan /app)
+    root * /app
 
-    # Handle PHP files
+    # Direktori index
+    file_server
+
+    # Handle file PHP
     php *.php
 
-    # Basic rewrite for non-files to index.php
+    # Route otomatis ke index.php (jika file tidak ada)
     @notFile {
         not file
     }
     rewrite @notFile /index.php
-    php @notFile
 }
