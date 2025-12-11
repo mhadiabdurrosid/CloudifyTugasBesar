@@ -3,18 +3,23 @@
     auto_https off
 }
 
-# Main domain
+# Main domain - FrankenPHP configuration
 {$RAILWAY_STATIC_URL:localhost} {
-    # Enable PHP processing
-    php
+    # FrankenPHP configuration
+    frankenphp
 
     # Root directory
     root * /app/public
 
-    # Enable file server
-    file_server
+    # Handle PHP files directly
+    @phpFiles {
+        path *.php
+    }
 
-    # URL rewriting (equivalent to .htaccess rules)
+    # Handle PHP files with FrankenPHP
+    php @phpFiles
+
+    # URL rewriting for non-file requests (equivalent to .htaccess)
     @notFile {
         not file
         not path /admin/*
@@ -22,12 +27,11 @@
 
     rewrite @notFile /index.php
 
-    # Handle PHP files
-    php_fastcgi @notFile unix//tmp/frankenphp.sock
+    # Handle rewritten requests as PHP
+    php @notFile
 
     # Security headers
     header {
-        # Disable directory listing
         -Server
         X-Frame-Options "SAMEORIGIN"
         X-Content-Type-Options "nosniff"
