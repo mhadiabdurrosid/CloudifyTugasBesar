@@ -2,13 +2,21 @@
 
 ## 🚀 Quick Setup Instructions
 
-### Step 1: Set Environment Variables in Railway
+### Step 1: Link MySQL Service and Set Environment Variables
 
-Go to your Railway project → Variables tab and add these variables:
+**IMPORTANT**: Railway needs your MySQL database connection configured properly!
+
+#### Option A: Link MySQL Service (Recommended)
+1. Go to your Railway project
+2. Click on your web service
+3. Go to "Variables" tab
+4. Click "Add Service Variable"
+5. Select your MySQL service - Railway will auto-inject variables
+
+#### Option B: Manual Environment Variables
+If Option A doesn't work, manually add these in your web service Variables:
 
 Based on your MySQL URL: `mysql://root:ifdumpRRCCYwVRygDxOWvSOZKsAYNfry@crossover.proxy.rlwy.net:16870/railway`
-
-Add these individual variables:
 
 ```
 MYSQLHOST=crossover.proxy.rlwy.net
@@ -18,7 +26,12 @@ MYSQLPASSWORD=ifdumpRRCCYwVRygDxOWvSOZKsAYNfry
 MYSQLDATABASE=railway
 ```
 
-**✅ Railway will automatically inject these when your MySQL service is linked.**
+**OR** add the full DATABASE_URL (Railway's format):
+```
+DATABASE_URL=mysql://root:ifdumpRRCCYwVRygDxOWvSOZKsAYNfry@crossover.proxy.rlwy.net:16870/railway
+```
+
+⚠️ **Make sure to add these to your WEB SERVICE, not just the MySQL service!**
 
 ### Step 2: Deploy Your Application
 

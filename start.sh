@@ -3,33 +3,68 @@ set -e
 
 echo "🚀 Starting Cloudify application..."
 
-# Wait for database to be ready
-echo "⏳ Waiting for database connection..."
-max_attempts=30
-attempt=0
-
-while [ $attempt -lt $max_attempts ]; do
-    if php -r "
-        \$host = getenv('MYSQLHOST') ?: 'localhost';
+# Parse database connection info from DATABASE_URL or individual env vars
+echo "🔍 Detecting database configuration..."
+DB_CHECK=$(php -r "
+    \$databaseUrl = getenv('DATABASE_URL');
+    if (\$databaseUrl) {
+        \$urlParts = parse_url(\$databaseUrl);
+        \$host = \$urlParts['host'] ?? '';
+        \$port = \$urlParts['port'] ?? 3306;
+    } else {
+        \$host = getenv('MYSQLHOST') ?: '';
         \$port = getenv('MYSQLPORT') ?: 3306;
-        \$conn = @fsockopen(\$host, \$port, \$errno, \$errstr, 2);
-        if (\$conn) {
-            fclose(\$conn);
-            exit(0);
-        }
-        exit(1);
-    "; then
-        echo "✅ Database is ready!"
-        break
-    fi
-    attempt=$((attempt + 1))
-    echo "   Attempt $attempt/$max_attempts - Database not ready yet..."
-    sleep 2
-done
+    }
+    
+    if (empty(\$host)) {
+        echo 'NONE';
+    } else {
+        echo \$host . ':' . \$port;
+    }
+")
 
-if [ $attempt -eq $max_attempts ]; then
-    echo "❌ Database connection timeout!"
-    exit 1
+if [ "$DB_CHECK" = "NONE" ]; then
+    echo "⚠️  No database configuration found!"
+    echo "⚠️  Set DATABASE_URL or MYSQL* environment variables in Railway"
+    echo "⚠️  Continuing without database initialization..."
+else
+    echo "📡 Database: $DB_CHECK"
+    
+    # Wait for database to be ready
+    echo "⏳ Waiting for database connection..."
+    max_attempts=15
+    attempt=0
+
+    while [ $attempt -lt $max_attempts ]; do
+        if php -r "
+            \$databaseUrl = getenv('DATABASE_URL');
+            if (\$databaseUrl) {
+                \$urlParts = parse_url(\$databaseUrl);
+                \$host = \$urlParts['host'] ?? 'localhost';
+                \$port = \$urlParts['port'] ?? 3306;
+            } else {
+                \$host = getenv('MYSQLHOST') ?: 'localhost';
+                \$port = getenv('MYSQLPORT') ?: 3306;
+            }
+            \$conn = @fsockopen(\$host, \$port, \$errno, \$errstr, 3);
+            if (\$conn) {
+                fclose(\$conn);
+                exit(0);
+            }
+            exit(1);
+        "; then
+            echo "✅ Database is ready!"
+            break
+        fi
+        attempt=$((attempt + 1))
+        echo "   Attempt $attempt/$max_attempts - Database not ready yet..."
+        sleep 3
+    done
+
+    if [ $attempt -eq $max_attempts ]; then
+        echo "⚠️  Database connection timeout after 45 seconds"
+        echo "⚠️  Continuing anyway - app will retry on first request..."
+    fi
 fi
 
 # Initialize database schema
