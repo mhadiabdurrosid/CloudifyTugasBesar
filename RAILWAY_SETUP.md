@@ -118,21 +118,45 @@ Check that Railway has created these environment variables automatically when yo
 
 These should match the values in your MySQL connection URL.
 
-## 🎯 Next Steps
+## 🎯 Deployment Steps
 
-1. Commit and push the changes
-2. Wait for Railway to redeploy
-3. Check the deployment logs for success messages
-4. Access your application via Railway's provided URL
-5. Login with default credentials and change passwords
+   ### Step-by-Step Process:
 
-## 📦 Files Modified
+   1. **Add Environment Variables FIRST (Critical!)**
+      - Go to Railway Dashboard → Your Project
+      - Click on your **web service** (not MySQL service!)
+      - Go to "Variables" tab
+      - Manually add the variables listed in Step 1 above
+      - Click "Deploy" or wait for auto-deploy
 
-- `Caddyfile` - Fixed TLS configuration for Railway
-- `Dockerfile` - Updated to use startup script
-- `start.sh` - New startup script with database initialization
-- `RAILWAY_SETUP.md` - This guide
+   2. **Commit and Push Your Code**
+      ```bash
+      git add .
+      git commit -m "Fix Railway deployment - add env check"
+      git push
+      ```
 
----
+   3. **Monitor Deployment**
+      - Watch Railway logs for "📡 Database: crossover.proxy.rlwy.net:16870"
+      - Should see "✅ Database is ready!"
+      - If you see "⚠️ No database configuration found!" → Variables not set correctly
 
-✨ Your Cloudify app should now deploy successfully on Railway!
+   4. **Test Your Deployment**
+      - Visit `https://your-app.railway.app/check_env.php` first
+      - This page will show if environment variables are configured
+      - Once check_env.php shows ✅ green, visit `/index.php`
+
+   5. **Login with Default Credentials**
+      - Username: `admin`
+      - Password: `admin123`
+
+   ## 📦 Files Modified
+
+   - `Caddyfile` - Fixed TLS configuration for Railway
+   - `Dockerfile` - Updated to use startup script
+   - `start.sh` - New startup script with database initialization
+   - `RAILWAY_SETUP.md` - This guide
+
+   ---
+
+   ✨ Your Cloudify app should now deploy successfully on Railway!
