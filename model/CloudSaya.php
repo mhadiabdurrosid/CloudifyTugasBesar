@@ -16,7 +16,9 @@ $currentUserId = (int)($_SESSION['user_id'] ?? 0);
 
 // Base URL (optional)
 if (!defined('BASE_URL')) {
-    define('BASE_URL', 'http://localhost/Cloudify/Cloudify/');
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    define('BASE_URL', $protocol . '://' . $host . '/');
 }
 
 // Format size helper

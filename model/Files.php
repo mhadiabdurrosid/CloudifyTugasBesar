@@ -13,9 +13,12 @@ class Files {
             ? $dbConnection 
             : $koneksi->getConnection();
 
-        $this->baseUrl = defined('BASE_URL')
-            ? BASE_URL
-            : 'http://localhost/Cloudify/Cloudify/';
+        if (!defined('BASE_URL')) {
+            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            define('BASE_URL', $protocol . '://' . $host . '/');
+        }
+        $this->baseUrl = BASE_URL;
     }
 
     /* ============================================================

@@ -18,12 +18,23 @@ class Koneksi {
             $db   = "cloudify";
             $port = 3306;
         } else {
-            // ☁️ KONEKSI PRODUKSI (Railway)
-            $host = getenv("MYSQLHOST") ?: "localhost";
-            $user = getenv("MYSQLUSER") ?: "root";
-            $pass = getenv("MYSQLPASSWORD") ?: "";
-            $db   = getenv("MYSQLDATABASE") ?: "cloudify";
-            $port = getenv("MYSQLPORT") ?: 3306;
+            // ☁️ KONEKSI PRODUKSI (Railway) - menggunakan DATABASE_URL
+            $databaseUrl = getenv("DATABASE_URL");
+            if ($databaseUrl) {
+                $urlParts = parse_url($databaseUrl);
+                $host = $urlParts['host'] ?? "localhost";
+                $user = $urlParts['user'] ?? "root";
+                $pass = $urlParts['pass'] ?? "";
+                $db   = ltrim($urlParts['path'] ?? "/cloudify", '/');
+                $port = $urlParts['port'] ?? 3306;
+            } else {
+                // Fallback ke env vars individual jika DATABASE_URL tidak ada
+                $host = getenv("MYSQLHOST") ?: "localhost";
+                $user = getenv("MYSQLUSER") ?: "root";
+                $pass = getenv("MYSQLPASSWORD") ?: "";
+                $db   = getenv("MYSQLDATABASE") ?: "cloudify";
+                $port = getenv("MYSQLPORT") ?: 3306;
+            }
         }
 
         // 🔗 Buat koneksi MySQL
