@@ -1,0 +1,23 @@
+# Aktifkan Rewrite Engine
+RewriteEngine On
+RewriteBase /
+
+# Izinkan akses file statis secara langsung
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Redirect semua request ke index.php (untuk routing)
+RewriteRule ^ index.php [L]
+
+# Fix PATH_INFO agar PHP bisa membaca rute
+AcceptPathInfo On
+
+# Atur batas upload
+php_value upload_max_filesize 20M
+php_value post_max_size 25M
+php_value memory_limit 256M
+php_value max_execution_time 300
+
+# Security dasar
+Options -Indexes
