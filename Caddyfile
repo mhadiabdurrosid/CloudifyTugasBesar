@@ -1,0 +1,50 @@
+{
+    # Disable automatic HTTPS
+    auto_https off
+}
+
+# Main domain
+{$RAILWAY_STATIC_URL:localhost} {
+    # Enable PHP processing
+    php
+
+    # Root directory
+    root * /app/public
+
+    # Enable file server
+    file_server
+
+    # URL rewriting (equivalent to .htaccess rules)
+    @notFile {
+        not file
+        not path /admin/*
+    }
+
+    rewrite @notFile /index.php
+
+    # Handle PHP files
+    php_fastcgi @notFile unix//tmp/frankenphp.sock
+
+    # Security headers
+    header {
+        # Disable directory listing
+        -Server
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+    }
+
+    # Handle static files
+    @static {
+        file
+        path *.css *.js *.png *.jpg *.jpeg *.gif *.ico *.svg *.woff *.woff2
+    }
+
+    # Cache static files
+    header @static Cache-Control "public, max-age=31536000"
+
+    # Log requests
+    log {
+        output stdout
+        format console
+    }
+}
