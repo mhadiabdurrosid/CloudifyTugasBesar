@@ -3,56 +3,34 @@ set -e
 
 echo "🚀 Starting Cloudify application..."
 
-echo "🔍 Detecting database configuration..."
-DB_CHECK=$(php -r "
-    \$host = getenv('MYSQLHOST') ?: '';
-    \$port = getenv('MYSQLPORT') ?: 3306;
-    echo empty(\$host) ? 'NONE' : \$host . ':' . \$port;
-")
+# Detect DB connection
+echo "🔍 Checking database environment..."
+DB_HOST=${MYSQLHOST:-""}
+DB_PORT=${MYSQLPORT:-3306}
 
-if [ "$DB_CHECK" = "NONE" ]; then
-    echo "⚠️  No database configuration found!"
+if [ -z "$DB_HOST" ]; then
+    echo "⚠️  No database environment variables found."
 else
-    echo "📡 Database: $DB_CHECK"
-    echo "⏳ Waiting for database connection..."
-
-    # Wait for DB
-    for i in {1..15}; do
-        if php -r "
-            \$conn = @fsockopen(getenv('MYSQLHOST'), getenv('MYSQLPORT'), \$errno, \$errstr, 3);
-            if (\$conn) { fclose(\$conn); exit(0); } else { exit(1); }
-        "; then
-            echo "✅ Database is ready!"
-            break
-        fi
-        sleep 3
-    done
+    echo "📡 Database: $DB_HOST:$DB_PORT"
 fi
 
-# Initialize Schema (optional)
-echo "📊 Initializing database schema..."
-if [ -f "/app/db/init_combined_cloudify.sql" ]; then
-    php -r "
-    require_once '/app/model/Koneksi.php';
-    \$db = new Koneksi();
-    \$conn = \$db->getConnection();
-    \$sql = file_get_contents('/app/db/init_combined_cloudify.sql');
-    \$conn->multi_query(\$sql);
-    echo 'Schema loaded\n';
-    "
-else
-    echo "⚠️  No schema file found, skipping..."
-fi
+# Wait for DB (optional but useful)
+echo "⏳ Waiting for database..."
+for i in {1..10}; do
+    if php -r "
+        \$host = getenv('MYSQLHOST')
+        \$port = getenv('MYSQLPORT');
+        if (\$host && @fsockopen(\$host, \$port, \$errno, \$errstr, 3)) exit(0);
+        exit(1);
+    "; then
+        echo "✅ Database is reachable."
+        break
+    fi
+    sleep 2
+done
 
-# Optional user setup
-echo "👥 Setting up users..."
-if [ -f "/app/setup_users.php" ]; then
-    php /app/setup_users.php
-else
-    echo "⚠️  setup_users.php missing, skipping..."
-fi
+echo "📊 Skipping schema initialization (using existing Cloudify DB)"
+echo "👥 Skipping user auto-setup (real users already exist)"
 
-echo "🎉 Initialization complete!"
-echo "🌐 Starting FrankenPHP web server..."
-
+echo "🌐 Starting FrankenPHP server..."
 exec frankenphp run --config /app/Caddyfile
