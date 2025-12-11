@@ -1,13 +1,17 @@
-:{$PORT:80} {
+:{$PORT} {
+    # root folder aplikasi di dalam container
     root * /app
-    php_server
-    file_server
 
+    # aktifkan PHP untuk semua file PHP
+    php_server
     php *.php
 
+    # static file server (CSS, JS, IMG)
+    file_server
+
+    # Jika path yang diminta bukan file, arahkan ke index.php
     @notFile {
         not file
     }
-
     rewrite @notFile /index.php
 }
