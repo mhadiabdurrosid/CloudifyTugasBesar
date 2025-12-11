@@ -1,54 +1,18 @@
-{
-    # Disable automatic HTTPS
-    auto_https off
-}
-
-# Main domain - FrankenPHP configuration
+# Basic FrankenPHP configuration for Railway
 {$RAILWAY_STATIC_URL:localhost} {
-    # FrankenPHP configuration
-    frankenphp
+    # Enable FrankenPHP
+    php_server
 
     # Root directory
     root * /app/public
 
-    # Handle PHP files directly
-    @phpFiles {
-        path *.php
-    }
+    # Handle PHP files
+    php *.php
 
-    # Handle PHP files with FrankenPHP
-    php @phpFiles
-
-    # URL rewriting for non-file requests (equivalent to .htaccess)
+    # Basic rewrite for non-files to index.php
     @notFile {
         not file
-        not path /admin/*
     }
-
     rewrite @notFile /index.php
-
-    # Handle rewritten requests as PHP
     php @notFile
-
-    # Security headers
-    header {
-        -Server
-        X-Frame-Options "SAMEORIGIN"
-        X-Content-Type-Options "nosniff"
-    }
-
-    # Handle static files
-    @static {
-        file
-        path *.css *.js *.png *.jpg *.jpeg *.gif *.ico *.svg *.woff *.woff2
-    }
-
-    # Cache static files
-    header @static Cache-Control "public, max-age=31536000"
-
-    # Log requests
-    log {
-        output stdout
-        format console
-    }
 }
