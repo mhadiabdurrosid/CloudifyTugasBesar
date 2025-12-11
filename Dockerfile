@@ -15,8 +15,11 @@ RUN mkdir -p /app/public/uploads && chmod 755 /app/public/uploads
 # Run database setup
 RUN php setup_users.php || true
 
-# Expose port (FrankenPHP handles this automatically)
+# Set default PORT for Railway
+ENV PORT=80
+
+# Expose port (Railway will override this with its own PORT)
 EXPOSE 80
 
-# Start FrankenPHP
-CMD ["frankenphp", "run"]
+# Start FrankenPHP with config flag to use adjacent Caddyfile
+CMD ["frankenphp", "run", "--config", "/app/public/Caddyfile"]

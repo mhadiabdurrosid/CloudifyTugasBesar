@@ -1,5 +1,6 @@
 # Basic FrankenPHP configuration for Railway
-{$RAILWAY_STATIC_URL:localhost} {
+# Railway handles TLS at the edge, so we serve plain HTTP
+:{$PORT:80} {
     # Enable FrankenPHP
     php_server
 
