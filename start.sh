@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "🚀 Starting Cloudify application..."
+echo "🚀 Starting Cloudify..."
 
 DB_HOST=${MYSQLHOST:-""}
 DB_PORT=${MYSQLPORT:-3306}
@@ -22,8 +22,5 @@ for i in {1..10}; do
     sleep 2
 done
 
-echo "📊 Skipping schema initialization"
-echo "👥 Skipping user auto-setup"
-
-echo "🌐 Starting FrankenPHP..."
-exec frankenphp run --config /Caddyfile
+echo "🌐 Starting PHP built-in server..."
+php -S 0.0.0.0:${PORT:-80} index.php
