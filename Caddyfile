@@ -1,16 +1,12 @@
 :{$PORT:80} {
     php_server
 
-    # Root directory of your Cloudify app
     root * /app
 
-    # Serve static files
     file_server
 
-    # Run PHP files
     php *.php
 
-    # Route all unknown requests to index.php
     @router {
         not file
     }
