@@ -1,48 +1,36 @@
 <?php
-session_start();
+require_once __DIR__ . '/Koneksi.php';
 
-
-require_once 'koneksi.php';
-
-class Auth extends koneksi{
+class auth {
 
     private $conn;
-    public function __construct(){
-        parent::__construct();
-        $this->conn = $this -> getConnection();
+
+    public function __construct() {
+        $db = new koneksi();
+        $this->conn = $db->getConnection();
     }
 
-    public function login($email, $password){
-        $sql = "SELECT * FROM auth WHERE email = '$email'";
-        $query = $this->conn->query($sql);
+    public function login($emailOrUsername, $password) {
 
-        if($query->num_rows > 0){
-            $row = $query->fetch_assoc();
-            if(password_verify($password, $row['password'])){
-                // echo "berhasil login";
-                $_SESSION['id_pengguna'] = $row['id_pengguna'];
-                $_SESSION['level'] = $row['level'];
+        $sql = "SELECT * FROM users WHERE email = ? OR username = ? LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
 
-                // return $row['id_pengguna'];
-                // Redirect sesuai level
-                return $row['level'];
-                if ($row['level'] == 0) {
-                    header("Location: index.php");
-                    exit();
-                } elseif ($row['level'] == 1) {
-                    header("Location: index.php");
-                    exit();
-                }
-                return $row['level'];
-        }else {
+        if (!$stmt) {
             return false;
-            // echo "gagal login";
         }
+
+        $stmt->bind_param("ss", $emailOrUsername, $emailOrUsername);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+
+        if (!$user) return false;
+
+        if (!password_verify($password, $user['password'])) {
+            return false;
+        }
+
+        return $user;
     }
-}}
-
-
-//  $auth = new Auth();
-//  $auth->login('asep@gmail.com', '12345');
-
+}
 ?>

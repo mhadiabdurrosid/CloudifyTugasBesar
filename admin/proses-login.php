@@ -1,46 +1,50 @@
 <?php
-require_once '../model/auth.php';
+session_start();
+header("Content-Type: application/json"); // wajib agar fetch tidak error JSON
 
-header('Content-Type: application/json');
+require_once "../model/Koneksi.php";
 
-$auth = new Auth();
+$db = new koneksi();
+$conn = $db->getConnection();
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Invalid request method.'
-    ]);
+$email = $_POST['email'] ?? "";
+$password = $_POST['password'] ?? "";
+
+// VALIDASI DASAR
+if (empty($email) || empty($password)) {
+    echo json_encode(["success"=>false, "message"=>"Email dan password wajib diisi"]);
     exit;
 }
 
-try {
-    // ambil data
-    $email    = $_POST['email']    ?? '';
-    $password = $_POST['password'] ?? '';
+// QUERY (username DIHAPUS, jadi JANGAN dipanggil)
+$stmt = $conn->prepare("SELECT id, email, display_name, role, password FROM users WHERE email = ? LIMIT 1");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$res = $stmt->get_result();
 
-    // panggil model
-    $login = $auth->login($email, $password);
-
-    if ($login !== false ) {
-        // kredensial valid
-        echo json_encode([
-            'success' => true,
-            'level' => $login
-        ]);
-    } else {
-        // kredensial salah
-        echo json_encode([
-            'success' => false,
-            'message' => 'Email atau password salah.'
-        ]);
-    }
-
-} catch (Exception $e) {
-    // kalau ada error di server (misal DB down)
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Server error: ' . $e->getMessage()
-    ]);
+// EMAIL TIDAK ADA
+if ($res->num_rows === 0) {
+    echo json_encode(["success"=>false, "message"=>"Email tidak ditemukan"]);
+    exit;
 }
+
+$user = $res->fetch_assoc();
+
+// PASSWORD SALAH
+if (!password_verify($password, $user['password'])) {
+    echo json_encode(["success"=>false, "message"=>"Password salah"]);
+    exit;
+}
+
+// LOGIN BERHASIL → SET SESSION
+$_SESSION['user_id'] = $user['id'];
+$_SESSION['email']   = $user['email'];
+$_SESSION['nama']    = $user['display_name'];
+$_SESSION['role']    = $user['role']; // user / admin / pegawai
+
+echo json_encode([
+    "success" => true,
+    "nama"    => $user['display_name'],
+    "role"    => $user['role']
+]);
+exit;

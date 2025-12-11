@@ -77,6 +77,24 @@ body {
   text-align: center;
 }
 
+/* Hilangkan underline pada menu sidebar */
+.sidebar .menu a {
+    text-decoration: none !important;
+}
+
+.sidebar .menu li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    color: #333;
+}
+
+.sidebar .menu li a:hover {
+    text-decoration: none !important;
+}
+
+
 /* STORAGE BOX */
 .storage {
   margin-top: 30px;
@@ -132,7 +150,7 @@ body {
 
 /* SEARCH BOX */
 .search-box {
-  width: 55%;
+  width: 65%;
   position: relative;
 }
 

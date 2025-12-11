@@ -1,0 +1,56 @@
+body {
+  background: #f4f6f9;
+  font-family: "Poppins", sans-serif;
+  padding: 25px;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+.form-box {
+  background: #fff;
+  padding: 25px;
+  max-width: 450px;
+  border-radius: 15px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 500;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid #cfd7df;
+}
+
+.btn-submit {
+  margin-top: 20px;
+  background: #1d90ff;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  width: 100%;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-submit:hover {
+  background: #0a6ecd;
+}
+
+.btn-back {
+  display: inline-block;
+  margin-top: 15px;
+  text-decoration: none;
+  color: #555;
+}

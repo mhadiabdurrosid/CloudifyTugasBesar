@@ -1,0 +1,238 @@
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: #f4f6f9;
+  color: #333;
+  padding: 25px;
+}
+
+/* ===== TITLE ===== */
+.dashboard-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ===== ALERT BOX ===== */
+.alert-box {
+  background: #d8eaff;
+  padding: 15px 20px;
+  border-left: 5px solid #007bff;
+  color: #03427c;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  position: relative;
+}
+
+.alert-box .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* ===== DASHBOARD CARDS ===== */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  color: #fff;
+  border-radius: 12px;
+  transition: 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-info .card-title {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+.card-info .card-count {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* Card Colors */
+.card-blue {
+  background: #1d90ff;
+}
+.card-green {
+  background: #00c27a;
+}
+.card-red {
+  background: #ff3d3d;
+}
+
+.card-icon i {
+  font-size: 40px;
+  opacity: 0.9;
+}
+
+/* ===== BUTTON TAMBAH ===== */
+.btn-add {
+  background: #1d90ff;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 15px;
+  transition: 0.25s ease;
+}
+
+.btn-add:hover {
+  background: #0c6ed6;
+}
+
+/* ===== TABLE WRAPPER ===== */
+.table-container {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+}
+
+/* ===== TABLE ===== */
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.custom-table th {
+  background: #1d90ff;
+  color: white;
+  padding: 12px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.custom-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e6e6e6;
+  font-size: 14px;
+}
+
+/* Hover row */
+.custom-table tr:hover td {
+  background: #f2f7ff;
+}
+
+/* ===== STATUS BADGES ===== */
+.status-active {
+  padding: 6px 12px;
+  background: #00c27a33;
+  color: #00a567;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.status-nonactive {
+  padding: 6px 12px;
+  background: #ff3d3d33;
+  color: #e02424;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+/* ===== ACTION BUTTONS ===== */
+.btn-edit,
+.btn-delete {
+  padding: 6px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  margin-right: 5px;
+  transition: 0.25s;
+}
+
+.btn-edit {
+  background: #ffc107;
+  color: #644a00;
+}
+
+.btn-edit:hover {
+  background: #e0a800;
+}
+
+.btn-delete {
+  background: #ff3d3d;
+  color: white;
+}
+
+.btn-delete:hover {
+  background: #d62828;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  th,
+  td {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .card-info .card-count {
+    font-size: 22px;
+  }
+
+  .card-icon i {
+    font-size: 32px;
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-box {
+  background: #fff;
+  padding: 25px;
+  width: 400px;
+  border-radius: 10px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
