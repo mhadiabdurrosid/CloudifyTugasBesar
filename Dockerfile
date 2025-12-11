@@ -1,13 +1,24 @@
-FROM dunglas/frankenphp:1.2-php8.3
+FROM php:8.2-apache
 
-RUN install-php-extensions mysqli pdo pdo_mysql
+# Enable Apache Rewrite
+RUN a2enmod rewrite
 
-COPY . /app
-WORKDIR /app
+# Allow .htaccess
+RUN sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
-RUN chmod +x /app/start.sh
+# Install PHP extensions
+RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-ENV PORT=8000
-EXPOSE 8000
+# Copy project
+COPY . /var/www/html/
 
-CMD ["/app/start.sh"]
+# Adjust permissions
+RUN chown -R www-data:www-data /var/www/html
+
+# Railway uses $PORT
+RUN sed -i "s/Listen 80/Listen \${PORT}/" /etc/apache2/ports.conf \
+ && sed -i "s/:80/:${PORT}/" /etc/apache2/sites-enabled/000-default.conf
+
+EXPOSE 80
+
+CMD ["apache2-foreground"]
