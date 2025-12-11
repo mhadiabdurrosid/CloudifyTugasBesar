@@ -12,7 +12,8 @@ if (!isset($_SESSION['user_id'])) {
 // =======================
 // 2. INISIALISASI
 // =======================
-define('BASE_URL', 'http://localhost/Cloudify/Cloudify/');
+define('BASE_URL', rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') . '/');
+
 
 // Ambil koneksi database
 require_once __DIR__ . '/model/Koneksi.php';    

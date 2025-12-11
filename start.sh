@@ -3,33 +3,26 @@ set -e
 
 echo "🚀 Starting Cloudify application..."
 
-echo "🔍 Checking database environment..."
-
 DB_HOST=${MYSQLHOST:-""}
 DB_PORT=${MYSQLPORT:-3306}
 
-if [ -z "$DB_HOST" ]; then
-    echo "⚠️  No database environment (MYSQLHOST missing)"
-else
-    echo "📡 Database: $DB_HOST:$DB_PORT"
-fi
+echo "📡 DB: $DB_HOST:$DB_PORT"
 
-echo "⏳ Waiting for database..."
+echo "⏳ Waiting for DB..."
 for i in {1..10}; do
-    php -r "
-        \$host = getenv('MYSQLHOST');
-        \$port = getenv('MYSQLPORT') ?: 3306;
-        if (!\$host) exit(1);
-        \$c = @fsockopen(\$host, \$port, \$e, \$s, 2);
-        if (\$c) { fclose(\$c); exit(0); }
+    if php -r "
+        \$h=getenv('MYSQLHOST');
+        \$p=getenv('MYSQLPORT');
+        if (\$h && @fsockopen(\$h,\$p,\$errno,\$errstr,3)) exit(0);
         exit(1);
-    " \
-    && { echo "✅ DB ready"; break; }
-
+    "; then
+        echo "✅ DB ready"
+        break
+    fi
     sleep 2
 done
 
-echo "📊 Skipping schema initialization (existing Cloudify DB)"
+echo "📊 Skipping schema initialization"
 echo "👥 Skipping user auto-setup"
 
 echo "🌐 Starting FrankenPHP..."

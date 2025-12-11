@@ -1,14 +1,13 @@
 :{$PORT:80} {
-    php_server
-
     root * /app
-
+    php_server
     file_server
 
     php *.php
 
-    @router {
+    @notFile {
         not file
     }
-    rewrite @router /index.php
+
+    rewrite @notFile /index.php
 }
