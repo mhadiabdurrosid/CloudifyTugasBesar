@@ -9,11 +9,9 @@ COPY . /app/public
 # Set working directory
 WORKDIR /app/public
 
-# Create uploads directory
-RUN mkdir -p /app/public/uploads && chmod 755 /app/public/uploads
-
-# Run database setup
-RUN php setup_users.php || true
+# Create uploads directory and make start.sh executable
+RUN mkdir -p /app/public/uploads && chmod 755 /app/public/uploads && \
+    chmod +x /app/public/start.sh
 
 # Set default PORT for Railway
 ENV PORT=80
@@ -21,5 +19,5 @@ ENV PORT=80
 # Expose port (Railway will override this with its own PORT)
 EXPOSE 80
 
-# Start FrankenPHP with config flag to use adjacent Caddyfile
-CMD ["frankenphp", "run", "--config", "/app/public/Caddyfile"]
+# Use start.sh to initialize database and start FrankenPHP
+CMD ["/app/public/start.sh"]
